@@ -1,0 +1,186 @@
+docker run --name mysql -d -p 3306:3306 --net moodle -v /home/netapp/moodle/dbdata:/var/lib/mysql -e MYSQL_DATABASE=moodle -e MYSQL_USER=moodle -e MYSQL_PASSWORD=moodle centurylink/mysql
+
+docker run -P --name moodle --net moodle --link DB:mysql -v /home/netapp/moodle/moodledata:/var/moodledata -e MOODLE_URL=http://10.67.8.181:8080 -d -p 8080:80 jauer/moodle
+
+
+docker run --name mysql -d \
+-p 3306:3306 \
+-v /home/netapp/moodle/dbdata:/var/lib/mysql \
+-e MYSQL_DATABASE=moodle \
+-e MYSQL_USER=moodle \
+-e MYSQL_PASSWORD=moodle \
+centurylink/mysql
+
+docker run -d -P --name moodlec --link mysql:DB \
+-v /home/netapp/moodle/moodledata:/var/moodledata \
+-v /home/netapp/moodle/eduhub:/var/www/html/theme/eduhub \
+-e MOODLE_URL=http://10.67.8.181:8080 \
+-p 8080:80 \
+promise/moodlec
+
+docker run -d -P --name moodlecc --link mysql:DB \
+-v /home/netapp/moodle/moodledata:/var/moodledata \
+-v /home/netapp/moodle/eduhub:/var/www/html/theme/eduhub \
+-e MOODLE_URL=http://10.67.8.181:8080 \
+-p 8080:80 \
+promise/moodlec
+
+# Updates test
+
+
+docker run --name testdb -d \
+-p 3307:3306 \
+-v /home/netapp/moodle/dbdata1:/var/lib/mysql \
+-e MYSQL_DATABASE=moodle \
+-e MYSQL_USER=moodle \
+-e MYSQL_PASSWORD=moodle \
+centurylink/mysql
+
+docker run -d -P --name moodletest --link mysql:DB \
+-v /home/netapp/moodle/moodledata1:/var/moodledata \
+-v /home/netapp/moodle/eduhub:/var/www/html/theme/eduhub \
+-e MOODLE_URL=http://10.67.8.181:8085 \
+-p 8085:80 \
+promise/moodlec
+
+
+RUN sed -i 's/post_max_size = 8M/post_max_size = 100M/g' /etc/php5/apache2/php.ini
+RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 100M/g' /etc/php5/apache2/php.ini
+RUN sed -i 's/max_execution_time = 30/max_execution_time = 600/g' /etc/php5/apache2/php.ini
+
+
+sudo groupadd docker
+
+sudo usermod -aG docker netapp
+
+#Install Docker-Machine 
+curl -L https://github.com/docker/machine/releases/download/v0.8.0-rc2/docker-machine-`uname -s`-`uname -m` >/usr/local/bin/docker-machine && \
+  chmod +x /usr/local/bin/docker-machine
+
+#Update Docker
+sudo apt-get upgrade docker-engine
+
+export VSPHERE_USERNAME=administrator@datafabric.com
+export VSPHERE_PASSWORD=Netapp1!
+export VSPHERE_CPU_COUNT=4
+export VSPHERE_MEMORY_SIZE=2048 
+export VSPHERE_BOOT2DOCKER_URL=/home/netapp/boot2docker.iso
+export VSPHERE_VCENTER=10.67.8.156
+export VSPHERE_VCENTER_PORT=443 
+export VSPHERE_DISK_SIZE=20000 
+export VSPHERE_NETWORK=DataFabric
+export VSPHERE_DATASTORE=Administration
+export VSPHERE_DATACENTER=Rivermead
+
+docker-machine create --driver vmwarevsphere docker04 && docker-machine create --driver vmwarevsphere docker05 
+
+ 
+sudo echo "deb https://apt.dockerproject.org/repo ubuntu-trusty experimental" > /etc/apt/sources.list.d/docker.list 
+
+docker run -d -v /home/netapp/kiwix/:/kiwix-data -p 8075:8080 promise/kiwix-indexa
+
+docker run -d --name kiwix-index \
+-v /home/netapp/kiwix/wiki/data/library:/kiwix-data \
+-p 8072:8080 \
+promise/kiwix-index
+
+WORKDIR /kiwix/kiwix-linux/bin
+RUN pwd
+RUN ls
+EXPOSE 8080
+CMD ["kiwix-serve --library /data/library/wikipedia_en_for_schools_opt_2013.zim.xml", "--port", "8080"]
+
+
+docker run --name mysql -d \
+-p 3306:3306 \
+-v /home/pi/moodle/dbdata:/var/lib/mysql \
+-e MYSQL_DATABASE=moodle \
+-e MYSQL_USER=moodle \
+-e MYSQL_PASSWORD=moodle \
+centurylink/mysql
+
+docker run -d --name moodle \
+-v /home/pi/moodle/moodledata:/var/moodledata \
+-v /home/pi/moodle/eduhub:/var/www/html/theme/eduhub \
+-e MOODLE_URL=http://192.168.10.1:8080 \
+-e DB_PORT_3306_TCP_ADDR=192.168.10.1 \
+-e DB_ENV_MYSQL_DATABASE=moodle \
+-e DB_ENV_MYSQL_USER=moodle \
+-e DB_ENV_MYSQL_PASSWORD=moodle \
+-e DB_PORT_3306_TCP_PORT=3306 \
+-p 8080:80 \
+moodle
+
+
+docker run -d --name DB -p 3307:3306 -e MYSQL_DATABASE=moodle -e MYSQL_USER=moodle -e MYSQL_PASSWORD=moodle --net moodle centurylink/mysql
+docker run -d -P --name moodle -e MOODLE_URL=http://192.168.10.1:8081 -p 8081:80 promise/moodlec
+
+
+mysqldump -u moodle --password=moodle -C -Q -e --create-options moodle > /var/lib/mysql/moodle.sql
+
+KALITE content directory in Docker Container
+/var/ka-lite/.kalite/content/
+
+docker run -d -P -p 8008:8008 \
+-v /home/netapp/ka-lite/content/kalite/:/var/ka-lite/.kalite/content \
+--name kalite \
+quantumobject/docker-ka-lite
+
+
+docker run -d -P -p 8008:8008 \
+quantumobject/docker-ka-lite
+
+sudo mv /var/lib/docker/network/files/ /tmp/docker-network-bck
+
+
+sudo dpkg --remove --force-remove-reinstreq ka-lite-raspberry-pi
+
+ln -s /media/pi/Kingston32/* ~/.kalite/content/
+
+ln -s /media/pi/raspberryPi01/kalite/* ~/.kalite/content/
+
+CREATE USER 'openemr'@'localhost' IDENTIFIED BY 'openemr';
+GRANT ALL PRIVILEGES ON * . * TO 'openemr'@'localhost';
+FLUSH PRIVILEGES;
+
+docker run -d -v /home/pi/docker-xowa/wiki:/opt/xowa/wiki -p 8075:80 promise/xowa
+
+CMD ["java","-Xmx256m","-jar","/opt/xowa/xowa_arm.jar","--app_mode http_server","--http_server_port 80"]
+
+
+kiwix-serve --daemon --port=8083 \
+    --index=/kiwix/data/index/wikipedia_en_all_nopic_01_2014.zim.idx \
+    /kiwix/data/content/wikipedia_en_all_nopic_01_2014.zim
+
+["./bin/kiwix-serve", "--port", "8080","--library","/kiwix-data/data/library/wikipedia_en_for_schools_opt_2013.zim.xml"]
+
+
+docker run -d --restart always \
+-v /home/pi/kiwix-data:/kiwix-data \
+-p 8075:8080 --name kiwix \
+promise/kiwix
+
+docker run --name mysql -d --restart always \
+-p 3306:3306 \
+-v /home/pi/moodle/dbdata:/var/lib/mysql \
+-e MYSQL_DATABASE=moodle \
+-e MYSQL_USER=moodle \
+-e MYSQL_PASSWORD=moodle \
+armv7/armhf-mysql:5.5.44
+
+docker run -d --name moodle --restart always \
+-v /home/pi/moodle/moodledata:/var/moodledata \
+-v /home/pi/moodle/eduhub:/var/www/html/theme/eduhub \
+-e MOODLE_URL=http://1.1.1.1:8080 \
+-e DB_PORT_3306_TCP_ADDR=1.1.1.1 \
+-e DB_ENV_MYSQL_DATABASE=moodle \
+-e DB_ENV_MYSQL_USER=moodle \
+-e DB_ENV_MYSQL_PASSWORD=moodle \
+-e DB_PORT_3306_TCP_PORT=3306 \
+-p 8080:80 \
+promise/moodle
+
+docker run -d -p 8085:80 --restart always \
+--name openemr \
+promise/opememr
+docker exec openemr service mysql restart
