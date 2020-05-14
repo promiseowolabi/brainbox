@@ -1,3 +1,7 @@
+###################################
+#           PART 1                #
+###################################
+
 # su -
 # export hostname=chip01
 # ssh-copy-id chip@chip01
@@ -19,6 +23,13 @@ nmcli device wifi connect "TALKTALK54297B" \
     
 shutdown -h now
  
+ 
+###################################
+#           PART 2                #
+###################################
+
+# su -
+
 sed -i \
     "s/opensource.nextthing.co/chip.jfpossibilities.com/" \
     /etc/apt/sources.list
@@ -38,4 +49,34 @@ sed -i "/chip/d" /etc/apt/sources.list
  
 sudo apt update
 
-sudo apt full-upgrade
+sudo apt -y full-upgrade
+
+sudo apt -y autoremove
+ 
+sudo apt -y remove --purge linux-image-4.4.13-ntc-mlc
+
+sudo apt -y --purge autoremove
+
+sudo apt -y update
+
+sudo apt -y install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+ 
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+ 
+sudo add-apt-repository \
+   "deb [arch=armhf] https://download.docker.com/linux/debian \
+   $(lsb_release -cs) \
+   stable"
+ 
+sudo apt-get update
+sudo apt-get -y install docker-ce docker-ce-cli containerd.io
+
+sudo usermod -aG docker chip
+
+sudo apt -y --purge autoremove
+ 
