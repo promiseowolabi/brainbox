@@ -3,7 +3,7 @@
 # ssh-copy-id chip@chip01
  
 cat >> /etc/sudoers << EOF
-$hostname ALL=(ALL) NOPASSWD:ALL
+chip ALL=(ALL) NOPASSWD:ALL
 EOF
 
 sed -i "s/chip/$hostname/" \
