@@ -36,6 +36,6 @@ sed -i "s/jessie/stretch/" /etc/apt/sources.list
 sed -i "/kaplan/d" /etc/apt/sources.list
 sed -i "/chip/d" /etc/apt/sources.list
  
-sudo apt-get update
+sudo apt update
 
-sudo apt-get full-upgrade
+sudo apt full-upgrade
