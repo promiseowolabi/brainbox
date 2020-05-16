@@ -80,5 +80,5 @@ sudo usermod -aG docker chip
 
 sudo apt -y --purge autoremove
 
-sudo chmod 777 /var/run/docker.soc
+sudo chmod 777 /var/run/docker.sock
  
