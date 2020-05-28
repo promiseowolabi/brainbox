@@ -74,11 +74,12 @@ sudo add-apt-repository \
    stable"
  
 sudo apt-get update
+ 
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io
-
+ 
 sudo usermod -aG docker chip
 
 sudo apt -y --purge autoremove
-
+ 
 sudo chmod 777 /var/run/docker.sock
  
